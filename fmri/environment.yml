@@ -15,4 +15,4 @@ dependencies:
   - nitime
   - nipy
   - docker
-  - neurodocker
+  - https://github.com/kaczmarj/neurodocker/archive/master.tar.gz
