@@ -1,5 +1,5 @@
 # ----------------------------------------------------------------------------
-# Dockerfile for fMRI projects on the HPC
+# Singularity file for fMRI projects on the HPC
 # Dan Gale 2017
 # 
 # Uses the nipype image (https://github.com/nipy/nipype/tree/master/docker)
