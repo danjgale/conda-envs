@@ -14,5 +14,3 @@ dependencies:
   - nilearn
   - nitime
   - nipy
-  - docker
-  - https://github.com/kaczmarj/neurodocker/archive/master.tar.gz
