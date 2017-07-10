@@ -1,0 +1,17 @@
+# ----------------------------------------------------------------------------
+# Dockerfile for fMRI projects on the HPC
+# Dan Gale 2017
+# 
+# Uses the nipype image (https://github.com/nipy/nipype/tree/master/docker)
+# with some additional python libraries and a nano text editor
+# ----------------------------------------------------------------------------
+Bootstrap:docker
+From: nipype/nipype:latest
+
+%setup
+	conda install ipython pytest scikit-image
+	apt-get update && apt-get install -y nano
+
+%labels
+
+AUTHOR Dan
