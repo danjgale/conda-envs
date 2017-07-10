@@ -29,7 +29,7 @@ These environments may either be used as complete standalone environments, or as
 In addition, `behav` contains some more specific libraries for statistical analysis typically required when analyzing human behavioural data collected from our experiments (namely, `statsmodels`, `seaborn`). 
 
 ### fmri
-`fmri` includes several additional libraries from the [nipy ecosystem](http://nipy.org/) (`nipy`, `nipype`, `nilearn`, `nibabel`, `nitime`) and `scikit-image` for working with fMRI data. As well, there are libraries for working with Docker (`docker`, `neurodocker`) when running analyses on HPCs or the cloud.
+`fmri` includes several additional libraries from the [nipy ecosystem](http://nipy.org/) (`nipy`, `nipype`, `nilearn`, `nibabel`, `nitime`) and `scikit-image` for working with fMRI data.
 
 ## Containers
 
