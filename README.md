@@ -7,7 +7,7 @@ This repository contains files to setup virtualized environments for behavioural
 - conda environment for behavioural projects
 
 `fmri/`:
-- conda environments and container files for fMRI projects. 
+- conda environment and `Dockerfile` for fMRI projects. 
 
 ## Conda Environments
 
@@ -33,4 +33,6 @@ In addition, `behav` contains some more specific libraries for statistical analy
 
 ## Containers
 
-A `Dockerfile` and `Singularity` file are included under `fmri/` to make portable, containerized environments in either the cloud or on an HPC, respectively. Both images import the [nipype image](https://github.com/nipy/nipype/tree/master/docker) and add some additional tools on top. 
+A `Dockerfile` is included under `fmri/` and the image it creates can be found on DockerHub https://hub.docker.com/r/danjgale/fmri/. This bundles the conda `fmri` environment with the [Nipype image](https://hub.docker.com/r/nipype/nipype/) and adds `nano` for convenience. 
+
+Note that if you wish to convert this image to a Singularity container to run on an HPC, you cannot directly pull the image into a `Singularity` file yet (due to a [known issue with Singularity](https://github.com/singularityware/singularity/issues/719)). The current workaround requires you to run [docker2singularity](https://github.com/singularityware/docker2singularity).
