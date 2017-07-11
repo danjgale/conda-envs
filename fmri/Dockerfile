@@ -7,5 +7,12 @@
 # ----------------------------------------------------------------------------
 FROM nipype/nipype:latest
 
-RUN conda install ipython pytest scikit-image
-RUN apt-get update && apt-get install -y nano
+# add nano for convenience
+RUN apt-get update && apt-get install -y nano 
+
+# ------------------------
+# Setup python environment
+# ------------------------ 
+
+COPY environment.yml .
+RUN conda env create
