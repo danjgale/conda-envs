@@ -7,8 +7,9 @@
 # ----------------------------------------------------------------------------
 FROM nipype/nipype:latest
 
-# add nano for convenience
-RUN apt-get update && apt-get install -y nano 
+# add nano for convenience and should already have a neurodebian key in nipype,
+# so install dcm2niix
+RUN apt-get update && apt-get install -y nano dcm2niix
 
 # ------------------------
 # Setup python environment
@@ -16,3 +17,5 @@ RUN apt-get update && apt-get install -y nano
 
 COPY environment.yml .
 RUN conda env create
+
+#ENTRYPOINT ["/bin/bash"]
