@@ -17,7 +17,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV LANG="en_US.UTF-8" \
     LC_ALL="C.UTF-8" \
     ND_ENTRYPOINT="/neurodocker/startup.sh"
-RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
     	apt-utils bzip2 ca-certificates curl locales unzip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
@@ -36,7 +36,10 @@ RUN apt-get update -qq \
     && apt-get install -y -q --no-install-recommends git \
                                                      nano \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
+
+# gcc
+RUN apt-get update && apt-get install -y gcc
 
 #------------------
 # Install Miniconda
@@ -57,23 +60,26 @@ RUN echo "Downloading Miniconda installer ..." \
 #-------------------------
 # Create conda environment
 #-------------------------
-RUN conda create -y -q --name fmri python=3.6 \
-                                   numpy \
-                                   scipy \
-                                   pandas \
-                                   jupyter \
-                                   scikit-learn \
-                                   matplotlib \
-                                   pytest \
-                                   scikit-image \
-    && sync && conda clean -tipsy && sync \
-    && /bin/bash -c "source activate fmri \
-      && pip install -q --no-cache-dir nipype \
-                                       nibabel \
-                                       nilearn \
-                                       nitime \
-                                       nipy" \
-    && sync
+# RUN conda create -y -q --name fmri python=3.6 \
+#                                    numpy \
+#                                    scipy \
+#                                    pandas \
+#                                    jupyter \
+#                                    scikit-learn \
+#                                    matplotlib \
+#                                    pytest \
+#                                    scikit-image \
+#     && sync && conda clean -tipsy && sync \
+#     && /bin/bash -c "source activate fmri \
+#       && pip install -q --no-cache-dir nipype \
+#                                        nibabel \
+#                                        nilearn \
+#                                        nitime \
+#                                        nipy" \
+#     && sync
+
+COPY environment.yml .
+RUN conda env create
 
 #--------------------
 # Install AFNI latest
@@ -91,24 +97,25 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends ed gsl-bin
        curl --retry 5 -o /tmp/libxp6.deb -sSL http://mirrors.kernel.org/debian/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb \
        && dpkg -i /tmp/libxp6.deb && rm -f /tmp/libxp6.deb" \
     # Install libpng12 (not in all ubuntu/debian repositories) \
-    && apt-get install -yq --no-install-recommends libpng12-0 \
+    && apt-get install -yq --no-install-recommends  libpng12-0 \
     || /bin/bash -c " \
        curl -o /tmp/libpng12.deb -sSL http://mirrors.kernel.org/debian/pool/main/libp/libpng/libpng12-0_1.2.49-1%2Bdeb7u2_amd64.deb \
        && dpkg -i /tmp/libpng12.deb && rm -f /tmp/libpng12.deb" \
+    && apt -y --fix-broken install
     # Install R \
-    && apt-get install -yq --no-install-recommends \
-    	r-base-dev r-cran-rmpi \
-     || /bin/bash -c " \
-        curl -o /tmp/install_R.sh -sSL https://gist.githubusercontent.com/kaczmarj/8e3792ae1af70b03788163c44f453b43/raw/0577c62e4771236adf0191c826a25249eb69a130/R_installer_debian_ubuntu.sh \
-        && /bin/bash /tmp/install_R.sh" \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && echo "Downloading AFNI ..." \
-    && mkdir -p /opt/afni \
-    && curl -sSL --retry 5 https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz \
-    | tar zx -C /opt/afni --strip-components=1 \
-    && /opt/afni/rPkgsInstall -pkgs ALL \
-    && rm -rf /tmp/*
+    # && apt-get install -yq --no-install-recommends \
+    # 	r-base-dev r-cran-rmpi \
+    #  || /bin/bash -c " \
+    #     curl -o /tmp/install_R.sh -sSL https://gist.githubusercontent.com/kaczmarj/8e3792ae1af70b03788163c44f453b43/raw/0577c62e4771236adf0191c826a25249eb69a130/R_installer_debian_ubuntu.sh \
+    #     && /bin/bash /tmp/install_R.sh" \
+    # && apt-get clean \
+    # && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    # && echo "Downloading AFNI ..." \
+    # && mkdir -p /opt/afni \
+    # && curl -sSL --retry 5 https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz \
+    # | tar zx -C /opt/afni --strip-components=1 \
+    # && /opt/afni/rPkgsInstall -pkgs ALL \
+    # && rm -rf /tmp/*
 
 #-------------------
 # Install ANTs 2.2.0
