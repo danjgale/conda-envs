@@ -5,7 +5,7 @@
 # pull request on our GitHub repository:
 #     https://github.com/kaczmarj/neurodocker
 #
-# Timestamp: 2017-09-21 11:29:04
+# Timestamp: 2017-09-22 14:39:04
 
 FROM ubuntu:17.04
 
@@ -17,8 +17,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV LANG="en_US.UTF-8" \
     LC_ALL="C.UTF-8" \
     ND_ENTRYPOINT="/neurodocker/startup.sh"
-RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
-    	apt-utils bzip2 ca-certificates curl locales unzip \
+RUN apt-get update -qq && apt-get install -yq --no-install-recommends  \
+    	apt-utils bzip2 ca-certificates \
+    && apt-get update -qq && apt-get install -yq --no-install-recommends \
+        curl locales unzip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && localedef --force --inputfile=en_US --charmap=UTF-8 C.UTF-8 \
@@ -33,13 +35,9 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends \
 ENTRYPOINT ["/neurodocker/startup.sh"]
 
 RUN apt-get update -qq \
-    && apt-get install -y -q --no-install-recommends git \
-                                                     nano \
+    && apt-get install -y -q --no-install-recommends git gcc \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* 
-
-# gcc
-RUN apt-get update && apt-get install -y gcc
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 #------------------
 # Install Miniconda
@@ -60,26 +58,23 @@ RUN echo "Downloading Miniconda installer ..." \
 #-------------------------
 # Create conda environment
 #-------------------------
-# RUN conda create -y -q --name fmri python=3.6 \
-#                                    numpy \
-#                                    scipy \
-#                                    pandas \
-#                                    jupyter \
-#                                    scikit-learn \
-#                                    matplotlib \
-#                                    pytest \
-#                                    scikit-image \
-#     && sync && conda clean -tipsy && sync \
-#     && /bin/bash -c "source activate fmri \
-#       && pip install -q --no-cache-dir nipype \
-#                                        nibabel \
-#                                        nilearn \
-#                                        nitime \
-#                                        nipy" \
-#     && sync
-
-COPY environment.yml .
-RUN conda env create
+RUN conda create -y -q --name fmri python=3.6 \
+                                   numpy \
+                                   scipy \
+                                   pandas \
+                                   jupyter \
+                                   scikit-learn \
+                                   matplotlib \
+                                   pytest \
+                                   scikit-image \
+    && sync && conda clean -tipsy && sync \
+    && /bin/bash -c "source activate fmri \
+      && pip install -q --no-cache-dir nipype \
+                                       nibabel \
+                                       nilearn \
+                                       nitime \
+                                       nipy" \
+    && sync
 
 #--------------------
 # Install AFNI latest
@@ -97,25 +92,24 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends ed gsl-bin
        curl --retry 5 -o /tmp/libxp6.deb -sSL http://mirrors.kernel.org/debian/pool/main/libx/libxp/libxp6_1.0.2-2_amd64.deb \
        && dpkg -i /tmp/libxp6.deb && rm -f /tmp/libxp6.deb" \
     # Install libpng12 (not in all ubuntu/debian repositories) \
-    && apt-get install -yq --no-install-recommends  libpng12-0 \
+    && apt-get install -yq --no-install-recommends libpng12-0 \
     || /bin/bash -c " \
        curl -o /tmp/libpng12.deb -sSL http://mirrors.kernel.org/debian/pool/main/libp/libpng/libpng12-0_1.2.49-1%2Bdeb7u2_amd64.deb \
        && dpkg -i /tmp/libpng12.deb && rm -f /tmp/libpng12.deb" \
-    && apt -y --fix-broken install
     # Install R \
-    # && apt-get install -yq --no-install-recommends \
-    # 	r-base-dev r-cran-rmpi \
-    #  || /bin/bash -c " \
-    #     curl -o /tmp/install_R.sh -sSL https://gist.githubusercontent.com/kaczmarj/8e3792ae1af70b03788163c44f453b43/raw/0577c62e4771236adf0191c826a25249eb69a130/R_installer_debian_ubuntu.sh \
-    #     && /bin/bash /tmp/install_R.sh" \
-    # && apt-get clean \
-    # && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    # && echo "Downloading AFNI ..." \
-    # && mkdir -p /opt/afni \
-    # && curl -sSL --retry 5 https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz \
-    # | tar zx -C /opt/afni --strip-components=1 \
-    # && /opt/afni/rPkgsInstall -pkgs ALL \
-    # && rm -rf /tmp/*
+    && apt-get install -yq --no-install-recommends \
+    	r-base-dev r-cran-rmpi \
+     || /bin/bash -c " \
+        curl -o /tmp/install_R.sh -sSL https://gist.githubusercontent.com/kaczmarj/8e3792ae1af70b03788163c44f453b43/raw/0577c62e4771236adf0191c826a25249eb69a130/R_installer_debian_ubuntu.sh \
+        && /bin/bash /tmp/install_R.sh" \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && echo "Downloading AFNI ..." \
+    && mkdir -p /opt/afni \
+    && curl -sSL --retry 5 https://afni.nimh.nih.gov/pub/dist/tgz/linux_openmp_64.tgz \
+    | tar zx -C /opt/afni --strip-components=1 \
+    && /opt/afni/rPkgsInstall -pkgs ALL \
+    && rm -rf /tmp/*
 
 #-------------------
 # Install ANTs 2.2.0
@@ -129,25 +123,13 @@ ENV ANTSPATH=/opt/ants \
 #--------------------------
 # Install FreeSurfer v6.0.0
 #--------------------------
+# Install version minimized for recon-all
+# See https://github.com/freesurfer/freesurfer/issues/70
 RUN apt-get update -qq && apt-get install -yq --no-install-recommends bc libgomp1 libxmu6 libxt6 tcsh perl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
-    && echo "Downloading FreeSurfer ..." \
-    && curl -sSL --retry 5 https://surfer.nmr.mgh.harvard.edu/pub/dist/freesurfer/6.0.0/freesurfer-Linux-centos6_x86_64-stable-pub-v6.0.0.tar.gz \
-    | tar xz -C /opt \
-    --exclude='freesurfer/trctrain' \
-    --exclude='freesurfer/subjects/fsaverage_sym' \
-    --exclude='freesurfer/subjects/fsaverage3' \
-    --exclude='freesurfer/subjects/fsaverage4' \
-    --exclude='freesurfer/subjects/fsaverage5' \
-    --exclude='freesurfer/subjects/fsaverage6' \
-    --exclude='freesurfer/subjects/cvs_avg35' \
-    --exclude='freesurfer/subjects/cvs_avg35_inMNI152' \
-    --exclude='freesurfer/subjects/bert' \
-    --exclude='freesurfer/subjects/V1_average' \
-    --exclude='freesurfer/average/mult-comp-cor' \
-    --exclude='freesurfer/lib/cuda' \
-    --exclude='freesurfer/lib/qt' \
+    && echo "Downloading minimized FreeSurfer ..." \
+    && curl -sSL https://dl.dropbox.com/s/nnzcfttc41qvt31/recon-all-freesurfer6-3.min.tgz | tar xz -C /opt \
     && sed -i '$isource $FREESURFER_HOME/SetUpFreeSurfer.sh' $ND_ENTRYPOINT
 ENV FREESURFER_HOME=/opt/freesurfer
 # Copy license file into image. Must be relative path within build context.
@@ -238,8 +220,8 @@ ENV MATLABCMD=/opt/mcr/v92/toolbox/matlab \
 # Save container specifications to JSON
 #--------------------------------------
 RUN echo '{ \
-    \n  "check_urls": false, \
-    \n  "generation_timestamp": "2017-09-21 11:29:04", \
+    \n  "pkg_manager": "apt", \
+    \n  "generation_timestamp": "2017-09-22 14:39:04", \
     \n  "instructions": [ \
     \n    [ \
     \n      "base", \
@@ -248,16 +230,15 @@ RUN echo '{ \
     \n    [ \
     \n      "install", \
     \n      [ \
-    \n        "git", \
-    \n        "nano" \
+    \n        "git gcc" \
     \n      ] \
     \n    ], \
     \n    [ \
     \n      "miniconda", \
     \n      { \
     \n        "conda_install": "python=3.6 numpy scipy pandas jupyter scikit-learn matplotlib pytest scikit-image", \
-    \n        "env_name": "fmri", \
-    \n        "pip_install": "nipype nibabel nilearn nitime nipy" \
+    \n        "pip_install": "nipype nibabel nilearn nitime nipy", \
+    \n        "env_name": "fmri" \
     \n      } \
     \n    ], \
     \n    [ \
@@ -275,6 +256,7 @@ RUN echo '{ \
     \n    [ \
     \n      "freesurfer", \
     \n      { \
+    \n        "min": true, \
     \n        "version": "6.0.0", \
     \n        "license_path": "rel/path/license.txt" \
     \n      } \
@@ -296,21 +278,21 @@ RUN echo '{ \
     \n      "neurodebian", \
     \n      { \
     \n        "download_server": "usa-nh", \
+    \n        "os_codename": "zesty", \
     \n        "pkgs": [ \
     \n          "afni", \
     \n          "dcm2niix" \
-    \n        ], \
-    \n        "os_codename": "zesty" \
+    \n        ] \
     \n      } \
     \n    ], \
     \n    [ \
     \n      "spm", \
     \n      { \
-    \n        "version": "12", \
-    \n        "matlab_version": "R2017a" \
+    \n        "matlab_version": "R2017a", \
+    \n        "version": "12" \
     \n      } \
     \n    ] \
     \n  ], \
-    \n  "neurodocker_version": "0.3.0", \
-    \n  "pkg_manager": "apt" \
+    \n  "check_urls": true, \
+    \n  "neurodocker_version": "0.3.0" \
     \n}' > /neurodocker/neurodocker_specs.json
