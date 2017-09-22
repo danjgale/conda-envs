@@ -11,12 +11,12 @@ def set_specs():
         'check_urls': False,
         'instructions': [
             ('base', 'ubuntu:17.04'),
-            ('install', ['git', 'nano']),
+            ('install', ['git gcc']),
             ('miniconda', {
                 'env_name': 'fmri',
                 'conda_install': 
                     'python=3.6 numpy scipy pandas jupyter scikit-learn matplotlib pytest scikit-image',
-                'pip_install': 'nipype nibabel nilearn nitime nipy'}),
+                    'pip_install': 'nipype nibabel nilearn nitime nipy'}),
             ('afni', {'version': 'latest'}),
             ('ants', {'version': '2.2.0'}),
             ('freesurfer', {'version': '6.0.0', 'license_path': 'rel/path/license.txt'}),
@@ -25,8 +25,6 @@ def set_specs():
             ('neurodebian', {'os_codename': 'zesty', 'download_server': 'usa-nh',
                             'pkgs': ['afni', 'dcm2niix']}),
             ('spm', {'version': '12', 'matlab_version': 'R2017a'})
-            # ('copy', ['../../envs/fmri/emvironment.yml']),
-            # ('run', 'conda env create')
         ]
     }
     return specs
