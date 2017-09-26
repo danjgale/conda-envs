@@ -3,15 +3,29 @@ This repository contains files to setup virtualized environments for behavioural
 
 ## Repository Structure
 
+
+### envs/
+
 `behav/`:
 - conda environment for behavioural projects
 
 `fmri/`:
 - conda environment and `Dockerfile` for fMRI projects. 
 
+### docker/
+
+`from-nipype/`
+- Adds the `fmri` conda environment to the existing nipype docker image
+
+`custom/`
+- Uses Neurodocker to configure and create a docker image. `create.py` is used to generate a `Dockerfile`; further customizations are needed, as follows:
+  - Comment out R install (not required)
+  - Remove conda package install and replace with `COPY environment.yml .` and `RUN conda env create`. 
+  - Add a Freesurfer license to the project and fix path (last line of FS install) 
+
 ## Conda Environments
 
-While I tend to prefer a separate environment for each and every project, I found that having several related projects always on the go resulted in multiple identical environments -- a little overkill. More so, I'm not as concerned with dependency hell for my own internal research projects, as I'm typically the sole author and the dependencies are extremely straightforward. Hence, the environments created from this repository act to streamline conda environments and prevent over-engineering.
+While I tend to prefer a separate environment for each and every project, I found that having several related projects always on the go resulted in multiple identical environments, which is a little overkill. More so, I'm not as concerned with dependency hell for my own internal research projects, as I'm typically the sole author and the dependencies are extremely straightforward. Hence, the environments created from this repository act to streamline conda environments and prevent over-engineering.
 
 There are currently two environments: `behav` and `fmri`, which are for behavioural and fMRI projects, respectively. Both environments include your typical PyData stack:
   - `numpy`
@@ -33,6 +47,6 @@ In addition, `behav` contains some more specific libraries for statistical analy
 
 ## Containers
 
-A `Dockerfile` is included under `fmri/` and the image it creates can be found on DockerHub https://hub.docker.com/r/danjgale/fmri/. This bundles the conda `fmri` environment with the [Nipype image](https://hub.docker.com/r/nipype/nipype/), an install of `dcm2niix`, and adds `nano` for convenience.
+A `Dockerfile` is included under `from-nipype/` and `custom`. For the former, the image it creates can be found on DockerHub https://hub.docker.com/r/danjgale/fmri/. This bundles the conda `fmri` environment with the [Nipype image](https://hub.docker.com/r/nipype/nipype/), an install of `dcm2niix`, and adds `nano` for convenience.
 
-Note that if you wish to convert this image to a Singularity container to run on an HPC, you cannot directly pull the image into a `Singularity` file yet (due to a [known issue with Singularity](https://github.com/singularityware/singularity/issues/719)). The current workaround requires you to run [docker2singularity](https://github.com/singularityware/docker2singularity).
+Note that if you wish to convert these images to Singularity containers to run on an HPC, you cannot directly pull the image into a `Singularity` file yet (due to a [known issue with Singularity](https://github.com/singularityware/singularity/issues/719)). The current workaround requires you to run [docker2singularity](https://github.com/singularityware/docker2singularity).
