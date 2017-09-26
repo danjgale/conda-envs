@@ -23,7 +23,7 @@ def set_specs():
             ('ants', {'version': '2.2.0'}),
             ('freesurfer', {
                 'version': '6.0.0',
-                'license_path': 'rel/path/license.txt',
+                'license_path': 'license.txt',
                 'min': True
                 }
             ),
