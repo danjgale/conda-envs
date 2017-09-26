@@ -76,7 +76,6 @@ RUN echo "Downloading Miniconda installer ..." \
 #                                        nipy" \
 #     && sync
 
-
 COPY environment.yml .
 RUN conda env create
 
@@ -137,7 +136,7 @@ RUN apt-get update -qq && apt-get install -yq --no-install-recommends bc libgomp
     && sed -i '$isource $FREESURFER_HOME/SetUpFreeSurfer.sh' $ND_ENTRYPOINT
 ENV FREESURFER_HOME=/opt/freesurfer
 # Copy license file into image. Must be relative path within build context.
-COPY ["rel/path/license.txt", "/opt/freesurfer/license.txt"]
+COPY ["license.txt", "/opt/freesurfer/license.txt"]
 
 #-----------------------------------------------------------
 # Install FSL v5.0.10
