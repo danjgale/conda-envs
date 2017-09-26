@@ -19,7 +19,6 @@ def set_specs():
                     'pip_install': 'nipype nibabel nilearn nitime nipy'
                     }
             ),
-            ('afni', {'version': 'latest'}),
             ('ants', {'version': '2.2.0'}),
             ('freesurfer', {
                 'version': '6.0.0',
