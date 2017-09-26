@@ -11,7 +11,7 @@ def set_specs():
         'check_urls': True,
         'instructions': [
             ('base', 'ubuntu:17.04'),
-            ('install', ['git gcc']),
+            ('install', ['git g++']),
             ('miniconda', {
                 'env_name': 'fmri',
                 'conda_install': 
@@ -28,7 +28,6 @@ def set_specs():
                 }
             ),
             ('fsl', {'version': '5.0.10', 'use_binaries': True}),
-            ('mrtrix3', {'use_binaries': False}),
             ('neurodebian', {
                 'os_codename': 'zesty', 
                 'download_server': 'usa-nh',
