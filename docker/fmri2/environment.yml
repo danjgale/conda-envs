@@ -1,0 +1,16 @@
+name: fmri
+dependencies:
+- numpy
+- scipy
+- pandas
+- jupyter
+- scikit-learn
+- matplotlib
+- pytest
+- scikit-image
+- pip:
+  - nipype
+  - nibabel
+  - nilearn
+  - nitime
+  - nipy
