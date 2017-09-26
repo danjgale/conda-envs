@@ -8,6 +8,7 @@ dependencies:
 - matplotlib
 - pytest
 - scikit-image
+- traits
 - pip:
   - nipype
   - nibabel
