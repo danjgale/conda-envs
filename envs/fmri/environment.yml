@@ -1,5 +1,10 @@
 name: fmri
+channels:
+  - defaults
+  - conda-forge
+  - bioconda
 dependencies:
+- python>=3.6
 - numpy
 - scipy
 - pandas
@@ -8,10 +13,19 @@ dependencies:
 - matplotlib
 - pytest
 - scikit-image
+- pymvpa
 - traits
+- seaborn
+- statsmodels
+- rpy2
+- pyqt
 - pip:
+  - jupyterlab
   - nipype
   - nibabel
   - nilearn
   - nitime
   - nipy
+  - pybids
+  - dcm2bids
+  - visbrain
