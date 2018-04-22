@@ -1,0 +1,17 @@
+name: pysurfer
+dependencies:
+- python=2.7
+- vtk
+- mayavi
+- pysurfer
+- matplotlib
+- numpy
+- pandas
+- scipy
+- seaborn
+- jupyter
+- ipython
+- scikit-image
+- pip:
+  - jupyterlab
+  - nibabel
